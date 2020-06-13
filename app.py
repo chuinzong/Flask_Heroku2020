@@ -34,27 +34,27 @@ def callback():
     return 'OK'
 
 def getNews():
-    """
-    建立一個抓最新消息的function
-    """
-    import requests
-    import re
-    from bs4 import BeautifulSoup
+	"""
+	建立一個抓最新消息的function
+	"""
+	import requests
+	import re
+	from bs4 import BeautifulSoup
 
-    url = 'https://www.ettoday.net/news/focus/3C%E5%AE%B6%E9%9B%BB/'
-    r = requests.get(url)
-    reponse = r.text
+	url = 'https://www.ettoday.net/news/focus/3C%E5%AE%B6%E9%9B%BB/'
+	r = requests.get(url)
+	reponse = r.text
 
-    url_list = re.findall(r'<h3><a href="/news/[\d]*/[\d]*.htm" .*>.*</a>',reponse)
+	url_list = re.findall(r'<h3><a href="/news/[\d]*/[\d]*.htm" .*>.*</a>',reponse)
 
-    soup = BeautifulSoup(url_list[0])
-    url = 'https://fashion.ettoday.net/' + soup.find('a')['href']
-    title = soup.text
+	soup = BeautifulSoup(url_list[0])
+	url = 'https://fashion.ettoday.net/' + soup.find('a')['href']
+	title = soup.text
 
 
-    tmp = title + ': ' +url
-    return tmp
-
+	tmp = title + ': ' +url
+	return tmp
+	
 from bs4 import BeautifulSoup
 import requests
 def movie():
@@ -72,16 +72,18 @@ def movie():
         link = "http://www.atmovies.com.tw" + data['href']
         content += '{}\n{}\n'.format(title, link)
     return content
-    
+	
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     # 傳送文字
     if event.message.text == '傳送文字':
         message = TextSendMessage(getNews())
-    else:
+	elif event.message.text == '電影':
+        message = TextSendMessage(movie())
+	else:
         message = TextSendMessage(text=event.message.text)
     line_bot_api.reply_message(event.reply_token, message)
 
-    
+	
 if __name__ == '__main__':
     app.run(debug=True)
